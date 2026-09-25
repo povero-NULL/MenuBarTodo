@@ -1,0 +1,26 @@
+# Xcode
+## User settings (個人のXcode設定・ウィンドウ状態など)
+*.xcuserstate
+project.xcworkspace/xcuserdata/
+*.xcuserdatad
+
+## Build products (ビルドキャッシュ・成果物)
+build/
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## macOS
+.DS_Store
+
+## Swift Package Manager
+.build/
+Packages/
+
+## Security & Secrets (※超重要：Google認証ファイルや秘密鍵)
+credentials.json
+*.plist.secret
+GoogleService-Info.plist
+*.env
