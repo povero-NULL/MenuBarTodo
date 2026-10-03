@@ -295,9 +295,30 @@ struct MenuBarTodoApp: App {
     }
 
     private func moveToInProgress(item: TodoItem) {
-        // Step 4 で Gmail API 側のラベル更新処理を結合します
+            // 1. UIの即時反映（楽観的UI更新）
         if let index = todos.firstIndex(where: { $0.id == item.id }) {
             todos[index].status = .inProgress
+        }
+
+        // 2. Gmail APIでラベル付け替えを実行
+        Task {
+            do {
+                // ラベルIDを名前から解決
+                let removeId = try await GmailService.shared.getLabelId(name: "1_未着手")
+                let addId = try await GmailService.shared.getLabelId(name: "2_進行中")
+
+                // Gmail側のスレッドのラベルを更新
+                try await GmailService.shared.modifyThreadLabels(
+                    threadId: item.threadId,
+                    addLabelIds: [addId],
+                    removeLabelIds: [removeId]
+                )
+                print("ラベル更新成功: \(item.subject)")
+            } catch {
+                print("ラベル更新エラー: \(error.localizedDescription)")
+                // 失敗した場合は再読み込みして元の状態に戻す
+                await loadEmails()
+            }
         }
     }
 
